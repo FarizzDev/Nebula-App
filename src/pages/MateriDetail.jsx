@@ -131,10 +131,10 @@ export default function MateriDetail() {
   const [chatHistory, setChatHistory] = useState([])
   const chatEndRef = useRef()
 
-  useEffect(()=>{ const m=await getMateriById(id); if(!m) navigate('/materi'); else { setMateri(m); setEditForm({ judul:m.judul, konten:m.konten, tags:m.tags||'' }) } },[id])
+  useEffect(async ()=>{ const m=await getMateriById(id); if(!m) navigate('/materi'); else { setMateri(m); setEditForm({ judul:m.judul, konten:m.konten, tags:m.tags||'' }) } },[id])
   useEffect(()=>{ chatEndRef.current?.scrollIntoView({behavior:'smooth'}) },[chatHistory])
 
-  function handleSaveEdit() {
+  async function handleSaveEdit() {
     if (!editForm.judul.trim()||!editForm.konten.trim()) return
     const updated = await saveMateri({ ...materi, ...editForm })
     const found   = updated.find(m=>m.id===id)
