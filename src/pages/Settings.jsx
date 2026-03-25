@@ -308,7 +308,7 @@ export default function Settings() {
             marginTop: 8,
           }}
         >
-          v0.4.0 — Built with ❤️ by{" "}
+          v0.4.1 — Built with ❤️ by{" "}
           <a
             href="https://github.com/FarizzDev"
             target="_blank"
