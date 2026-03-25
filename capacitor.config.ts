@@ -1,0 +1,32 @@
+import type { CapacitorConfig } from '@capacitor/cli'
+
+const config: CapacitorConfig = {
+  appId: 'com.nebula.app',
+  appName: 'Nebula',
+  webDir: 'dist',
+  android: {
+    buildOptions: {
+      releaseType: 'APK',
+    },
+  },
+  plugins: {
+    SplashScreen: {
+      launchShowDuration: 1500,
+      launchAutoHide: true,
+      backgroundColor: '#07071a',
+      androidSplashResourceName: 'splash',
+      showSpinner: false,
+    },
+    StatusBar: {
+      style: 'Dark',
+      backgroundColor: '#07071a',
+    },
+    LocalNotifications: {
+      smallIcon: 'ic_stat_nebula',
+      iconColor: '#3b82f6',
+      sound: 'default',
+    },
+  },
+}
+
+export default config
