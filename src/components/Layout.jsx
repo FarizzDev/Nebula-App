@@ -1,7 +1,7 @@
 import { Outlet, NavLink } from "react-router-dom";
 
 const NAV = [
-  { to: "/", exact: true, label: "Home", icon: "⌂" },
+  { to: "/", exact: true, label: "Home", icon: "🏠" },
   { to: "/materi", label: "Materi", icon: "📖" },
   { to: "/chat", label: "Chat", icon: "💬" },
   { to: "/soal", label: "Soal", icon: "📝" },
