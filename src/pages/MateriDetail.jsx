@@ -131,7 +131,24 @@ export default function MateriDetail() {
   const [chatHistory, setChatHistory] = useState([])
   const chatEndRef = useRef()
 
-  useEffect(async ()=>{ const m=await getMateriById(id); if(!m) navigate('/materi'); else { setMateri(m); setEditForm({ judul:m.judul, konten:m.konten, tags:m.tags||'' }) } },[id])
+  useEffect(() => {
+    const fetchMateri = async () => {
+      const m = await getMateriById(id);
+      
+      if (!m) {
+        navigate('/materi');
+      } else {
+        setMateri(m);
+        setEditForm({ 
+          judul: m.judul, 
+          konten: m.konten, 
+          tags: m.tags || '' 
+        });
+      }
+    };
+
+    fetchMateri(); 
+  }, [id]);
   useEffect(()=>{ chatEndRef.current?.scrollIntoView({behavior:'smooth'}) },[chatHistory])
 
   async function handleSaveEdit() {
