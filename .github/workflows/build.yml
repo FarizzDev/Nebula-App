@@ -44,7 +44,7 @@ jobs:
         run: pnpm exec cap sync android
 
       - name: Generate Icon & Splash Screen Native
-        run: pnpx @capacitor/assets generate --android
+        run: npx @capacitor/assets generate --android
 
       - name: Decode Keystore
         if: github.ref == 'refs/heads/main'
