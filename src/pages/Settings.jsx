@@ -38,6 +38,8 @@ export default function Settings() {
   };
   const section = { borderRadius: 16, padding: 16, marginBottom: 12 };
 
+  const VERSION = "0.5.0";
+
   if (loading)
     return (
       <div
@@ -133,17 +135,6 @@ export default function Settings() {
             {showKey ? "🙈" : "👁️"}
           </button>
         </div>
-        {settings.apiKey && (
-          <p
-            style={{
-              fontSize: 12,
-              color: "var(--color-success)",
-              marginTop: 6,
-            }}
-          >
-            ✅ API Key tersimpan
-          </p>
-        )}
       </div>
 
       <div className="glass" style={section}>
@@ -308,7 +299,7 @@ export default function Settings() {
             marginTop: 8,
           }}
         >
-          v0.4.1 — Built with ❤️ by{" "}
+          {VERSION} — Built with ❤️ by{" "}
           <a
             href="https://github.com/FarizzDev"
             target="_blank"
