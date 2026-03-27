@@ -40,11 +40,11 @@ jobs:
       - name: Setup Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: Install Capacitor CLI
-        run: pnpm exec cap sync android
-
       - name: Generate Icon & Splash Screen Native
         run: npx @capacitor/assets generate --android
+
+      - name: Install Capacitor CLI
+        run: pnpm exec cap sync android
 
       - name: Decode Keystore
         if: github.ref == 'refs/heads/main'
