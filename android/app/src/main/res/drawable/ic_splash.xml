@@ -1,0 +1,60 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android" xmlns:aapt="http://schemas.android.com/aapt"
+    android:viewportWidth="100"
+    android:viewportHeight="100"
+    android:width="288dp"
+    android:height="288dp">
+    <path
+        android:pathData="M98 50A48 48 0 0 1 2 50A48 48 0 0 1 98 50Z"
+        android:fillColor="#0A0A1A" />
+    <path
+        android:pathData="M80 50A30 30 0 0 1 20 50A30 30 0 0 1 80 50Z"
+        android:strokeWidth="2">
+        <aapt:attr
+            name="android:strokeColor">
+            <gradient
+                android:type="radial"
+                android:centerX="50"
+                android:centerY="50"
+                android:gradientRadius="30"
+                android:tileMode="clamp">
+                <item
+                    android:color="#9960A5FA"
+                    android:offset="0" />
+                <item
+                    android:color="#99818CF8"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M58 50A8 8 0 0 1 42 50A8 8 0 0 1 58 50Z">
+        <aapt:attr
+            name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="50"
+                android:centerY="50"
+                android:gradientRadius="8"
+                android:tileMode="clamp">
+                <item
+                    android:color="#60A5FA"
+                    android:offset="0" />
+                <item
+                    android:color="#818CF8"
+                    android:offset="1" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path
+        android:pathData="M53 20A3 3 0 0 1 47 20A3 3 0 0 1 53 20Z"
+        android:fillColor="#60A5FA"
+        android:fillAlpha="0.8" />
+    <path
+        android:pathData="M82 50A2 2 0 0 1 78 50A2 2 0 0 1 82 50Z"
+        android:fillColor="#818CF8"
+        android:fillAlpha="0.6" />
+    <path
+        android:pathData="M29.7 70A2 2 0 0 1 25.7 70A2 2 0 0 1 29.7 70Z"
+        android:fillColor="#60A5FA"
+        android:fillAlpha="0.5" />
+</vector>
