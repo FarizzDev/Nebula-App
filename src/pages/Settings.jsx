@@ -38,7 +38,7 @@ export default function Settings() {
   };
   const section = { borderRadius: 16, padding: 16, marginBottom: 12 };
 
-  const VERSION = "0.6.0";
+  const VERSION = "0.6.1";
 
   if (loading)
     return (

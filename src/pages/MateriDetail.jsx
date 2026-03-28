@@ -20,31 +20,34 @@ function PomodoroTimer({ toast, workMinutes = 25, breakMinutes = 5 }) {
 
   useEffect(() => {
     if (!running) return;
-    const id = setInterval(
-      () =>
-        setSecs((s) => {
-          if (s <= 1) {
-            clearInterval(id);
-            if (phase === "work") {
-              setPhase("break");
-              setSecs(breakMinutes * 60);
-              hapticLight();
-              toast.info("☕ Waktunya istirahat!")
-            } else {
-              hapticMedium();
-              toast.info("☠️ Waktu istirahat telah berakhir!");
-              setPhase("work");
-              setSecs(workMinutes * 60);
-              setRunning(false);
-            }
-            return 0;
-          }
-          return s - 1;
-        }),
-      1000,
-    );
+
+    const id = setInterval(() => {
+      setSecs((s) => (s > 0 ? s - 1 : 0));
+    }, 1000);
+
     return () => clearInterval(id);
-  }, [running, phase]);
+  }, [running]);
+
+  useEffect(() => {
+    if (secs !== 0 || !running) return;
+
+    const handlePhaseChange = async () => {
+      if (phase === "work") {
+        await hapticLight();
+        setPhase("break");
+        setSecs(breakMinutes * 60);
+        toast.info("☕ Waktunya istirahat!");
+      } else {
+        await hapticMedium();
+        setPhase("work");
+        setSecs(workMinutes * 60);
+        setRunning(false);
+        toast.info("☠️ Waktu istirahat telah berakhir!");
+      }
+    };
+
+    handlePhaseChange();
+  }, [secs, running, phase, breakMinutes, workMinutes]);
 
   const mm = String(Math.floor(secs / 60)).padStart(2, "0");
   const ss = String(secs % 60).padStart(2, "0");
