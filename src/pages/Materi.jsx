@@ -2,10 +2,11 @@ import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { getMateriList, saveMateri, deleteMateri } from "../lib/store";
 import { fetchMateriFromTopic } from "../lib/gemini";
-import { hapticSuccess } from "../lib/notifications";
+import { hapticError, hapticSuccess } from "../lib/notifications";
 import { debounce } from "../utils/debounce";
+import { useToast, ConfirmModal } from "../components/UI";
 
-function EditModal({ materi, onSave, onClose }) {
+function EditModal({ materi, toast, onSave, onClose }) {
   const [form, setForm] = useState({
     judul: materi?.judul || "",
     konten: materi?.konten || "",
@@ -156,8 +157,12 @@ function EditModal({ materi, onSave, onClose }) {
             />
           </div>
           <button
-            onClick={() => {
-              if (!form.judul.trim() || !form.konten.trim()) return;
+            onClick={async () => {
+              if (!form.judul.trim() || !form.konten.trim()) {
+                await hapticError();
+                toast.error("Judul dan Konten harus diisi!");
+                return;
+              }
               onSave(form);
             }}
             className="btn-primary"
@@ -169,7 +174,7 @@ function EditModal({ materi, onSave, onClose }) {
               fontWeight: 700,
             }}
           >
-            {materi ? "💾 Simpan Perubahan" : "+ Tambah Materi"}
+            {materi ? "💾 Simpan Perubahan" : "Tambah Materi"}
           </button>
         </div>
       </div>
@@ -186,8 +191,10 @@ export default function Materi() {
   const [loading, setLoading] = useState(false);
   const [pageLoading, setPageLoading] = useState(true);
   const [streamText, setStreamText] = useState("");
+  const [confirmDelete, setConfirmDelete] = useState(null);
   const fileRef = useRef();
   const searchRef = useRef();
+  const toast = useToast();
 
   useEffect(() => {
     getMateriList().then((l) => {
@@ -222,6 +229,19 @@ export default function Materi() {
     setList(updated);
     setModal(null);
     await hapticSuccess();
+    toast.success(`Materi berhasil ${isEdit ? "diperbarui" : "ditambahkan"}!`);
+  }
+
+  async function handleDelete(id) {
+    setConfirmDelete({
+      title: "Hapus materi?",
+      message: "Aksi ini tidak bisa dibatalkan.",
+      onConfirm: async () => {
+        setList(await deleteMateri(id));
+        toast.success("Materi berhasil dihapus!");
+      },
+      variant: "danger",
+    });
   }
 
   async function handleFetchAI() {
@@ -245,8 +265,9 @@ export default function Materi() {
       setAiTopic("");
       setStreamText("");
       await hapticSuccess();
+      toast.success("Materi berhasil ditambahkan!");
     } catch (e) {
-      alert("Error: " + e.message);
+      toast.error("Error: " + e.message);
     }
     setLoading(false);
   }
@@ -302,6 +323,11 @@ export default function Materi() {
 
   return (
     <div style={{ padding: "20px 16px", maxWidth: 600, margin: "0 auto" }}>
+      <ConfirmModal
+        config={confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+      />
+
       <div
         style={{
           display: "flex",
@@ -429,9 +455,7 @@ export default function Materi() {
               ✏️
             </button>
             <button
-              onClick={async () => {
-                if (confirm("Hapus?")) setList(await deleteMateri(m.id));
-              }}
+              onClick={async () => await handleDelete(m.id)}
               style={{
                 background: "none",
                 border: "none",
@@ -590,11 +614,15 @@ export default function Materi() {
                     }
                   />
                   <button
-                    onClick={() => {
+                    onClick={async () => {
                       const j = document.getElementById("add-judul").value;
                       const k = document.getElementById("add-konten").value;
                       const t = document.getElementById("add-tags").value;
-                      if (!j.trim() || !k.trim()) return;
+                      if (!j.trim() || !k.trim()) {
+                        await hapticError();
+                        toast.error("Judul dan Konten harus diisi!");
+                        return;
+                      }
                       handleSave({ judul: j, konten: k, tags: t });
                     }}
                     className="btn-primary"
@@ -724,6 +752,7 @@ export default function Materi() {
       {modal && modal !== "add" && (
         <EditModal
           materi={modal}
+          toast={toast}
           onSave={handleSave}
           onClose={() => setModal(null)}
         />

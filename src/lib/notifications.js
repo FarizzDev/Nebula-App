@@ -97,3 +97,13 @@ export async function hapticSuccess() {
     await Haptics.notification({ type: "SUCCESS" });
   } catch {}
 }
+export async function hapticWarning() {
+  try {
+    await Haptics.notification({ type: "WARNING" });
+  } catch {}
+}
+export async function hapticError() {
+  try {
+    await Haptics.notification({ type: "ERROR" });
+  } catch {}
+}

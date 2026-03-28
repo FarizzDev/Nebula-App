@@ -11,7 +11,9 @@ import {
   getNotifStatus,
   hapticMedium,
   hapticSuccess,
+  hapticError,
 } from "../lib/notifications";
+import { useToast, ConfirmModal } from "../components/UI";
 
 export default function Reminder() {
   const [reminders, setReminders] = useState([]);
@@ -25,6 +27,8 @@ export default function Reminder() {
   const [filter, setFilter] = useState("aktif");
   const [notifStatus, setNotifStatus] = useState("default");
   const [loading, setLoading] = useState(true);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const toast = useToast();
 
   useEffect(() => {
     async function load() {
@@ -52,7 +56,11 @@ export default function Reminder() {
   }
 
   async function handleSave() {
-    if (!form.judul.trim()) return;
+    if (!form.judul.trim()) {
+      await hapticError()
+      toast.error("Nama tugas tidak boleh kosong!");
+      return;
+    }
     const updated = await saveReminder({
       ...form,
       id: Date.now().toString(),
@@ -62,17 +70,26 @@ export default function Reminder() {
     await hapticSuccess();
     setForm({ judul: "", catatan: "", deadline: "", prioritas: "normal" });
     setShowAdd(false);
+    toast.success("Reminder berhasil ditambahkan!");
   }
 
   async function handleToggle(id) {
-    const updated = await toggleReminderDone(id);
+    const { list: updated, done } = await toggleReminderDone(id);
     await updateReminders(updated);
     await hapticMedium();
+    toast.info(`Reminder dipindahkan ke tab ${done ? "Selesai" : "Aktif"}.`);
   }
 
   async function handleDelete(id) {
-    const updated = await deleteReminder(id);
-    await updateReminders(updated);
+    setConfirmDelete({
+      title: "Hapus reminder?",
+      message: "Aksi ini tidak bisa dibatalkan.",
+      onConfirm: async () => {
+        updateReminders(await deleteReminder(id));
+        toast.success("Reminder berhasil dihapus!");
+      },
+      variant: "danger",
+    });
   }
 
   const now = new Date();
@@ -103,7 +120,7 @@ export default function Reminder() {
       color: "var(--color-success)",
       bg: "rgba(52,211,153,0.07)",
       border: "rgba(52,211,153,0.3)",
-      hint: "H-1 hari, H-1 jam, tepat deadline",
+      hint: "1 Hari sebelumnya jam 19:15",
       disabled: true,
     },
     denied: {
@@ -169,6 +186,11 @@ export default function Reminder() {
 
   return (
     <div style={{ padding: "20px 16px", maxWidth: 600, margin: "0 auto" }}>
+      <ConfirmModal
+        config={confirmDelete}
+        onClose={() => setConfirmDelete(null)}
+      />
+
       <div style={{ marginBottom: 14 }}>
         <div
           style={{

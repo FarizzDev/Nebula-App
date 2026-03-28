@@ -8,8 +8,10 @@ import {
   generateSoal,
   diskusiJawaban,
 } from "../lib/gemini";
+import { useToast } from "../components/UI";
+import { hapticLight, hapticMedium } from "../lib/notifications";
 
-function PomodoroTimer({ workMinutes = 25, breakMinutes = 5 }) {
+function PomodoroTimer({ toast, workMinutes = 25, breakMinutes = 5 }) {
   const [phase, setPhase] = useState("work");
   const [secs, setSecs] = useState(workMinutes * 60);
   const [running, setRunning] = useState(false);
@@ -26,11 +28,11 @@ function PomodoroTimer({ workMinutes = 25, breakMinutes = 5 }) {
             if (phase === "work") {
               setPhase("break");
               setSecs(breakMinutes * 60);
-              if (Notification.permission === "granted")
-                new Notification("☕ Waktunya istirahat!", {
-                  body: "Udah " + workMinutes + " menit belajar!",
-                });
+              hapticLight();
+              toast.info("☕ Waktunya istirahat!")
             } else {
+              hapticMedium();
+              toast.info("☠️ Waktu istirahat telah berakhir!");
               setPhase("work");
               setSecs(workMinutes * 60);
               setRunning(false);
@@ -390,6 +392,7 @@ export default function MateriDetail() {
   const [chatInput, setChatInput] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const chatEndRef = useRef();
+  const toast = useToast();
 
   useEffect(() => {
     const init = async () => {
@@ -427,6 +430,7 @@ export default function MateriDetail() {
     const found = updated.find((m) => m.id === id);
     setMateri(found);
     setEditing(false);
+    toast.success("Materi berhasil diperbarui!");
   }
 
   async function handleExplain() {
@@ -466,8 +470,9 @@ export default function MateriDetail() {
     try {
       const result = await generateSoal(materi.konten, 5);
       setSoalList(result.length ? result : []);
+      toast.success("Berhasil membuat soal!");
     } catch (e) {
-      alert("Gagal generate soal: " + e.message);
+      toast.error("Gagal generate soal: " + e.message);
     }
     setSoalLoading(false);
   }
@@ -733,6 +738,7 @@ export default function MateriDetail() {
       </div>
 
       <PomodoroTimer
+        toast={toast}
         workMinutes={settings.pomodoroWork || 25}
         breakMinutes={settings.pomodoroBreak || 5}
       />

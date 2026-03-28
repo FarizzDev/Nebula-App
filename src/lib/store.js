@@ -94,11 +94,15 @@ export async function deleteReminder(id) {
   return list;
 }
 export async function toggleReminderDone(id) {
-  const list = (await getReminders()).map((r) =>
-    r.id === id ? { ...r, done: !r.done } : r,
-  );
+  let done = false;
+
+  const list = (await getReminders()).map((r) => {
+    if (r.id === id) done = !r.done;
+    return r.id === id ? { ...r, done } : r;
+  });
+
   await set(K.REMINDERS, list);
-  return list;
+  return { list, done };
 }
 
 // ── Settings ──────────────────────────────────────────────────
