@@ -238,10 +238,15 @@ export default function Settings() {
                 type="number"
                 min={min}
                 max={max}
-                value={settings[k] || 25}
-                onChange={(e) =>
-                  setSettings((s) => ({ ...s, [k]: parseInt(e.target.value) }))
-                }
+                value={settings[k] ?? ""}
+                onChange={(e) => {
+                  const raw = e.target.value;
+                  if (raw === "") {
+                    setSettings((s) => ({ ...s, [k]: "" }));
+                  } else {
+                    setSettings((s) => ({ ...s, [k]: parseInt(raw) }));
+                  }
+                }}
                 style={{
                   ...inputS,
                   textAlign: "center",
@@ -250,9 +255,24 @@ export default function Settings() {
                 onFocus={(e) =>
                   (e.target.style.borderColor = "rgba(96,165,250,0.5)")
                 }
-                onBlur={(e) =>
-                  (e.target.style.borderColor = "var(--color-border)")
-                }
+                onBlur={(e) => {
+                  e.target.style.borderColor = "var(--color-border)";
+
+                  let currentValue = settings[k];
+                  if (
+                    currentValue === "" ||
+                    currentValue == null ||
+                    isNaN(currentValue)
+                  ) {
+                    setSettings((s) => ({ ...s, [k]: 25 }));
+                  } else {
+                    const clampedValue = Math.max(
+                      min,
+                      Math.min(max, currentValue),
+                    );
+                    setSettings((s) => ({ ...s, [k]: clampedValue }));
+                  }
+                }}
               />
             </div>
           ))}
